@@ -101,48 +101,57 @@
       StringBuilder symLex = new StringBuilder();
       int symKind = noSym;
 
-      if (ch == "'" || ch == '"' ){
-        
-
+      if (Character.isLetter(ch) && !Character.isISOControl(ch) && (ch != '"') && (ch != '\'')){ //Atomic
+        //No repeate
+		/*do{
+			symLex.append(ch); getChar();
+		}while(Character.isLetter(ch));*/
+		symLex.append(ch); getChar();
+		symKind = atomicSym;
       }
+	  else if(ch == (char) '\''){ //Escape for noquote1
+		symLex.append(ch); getChar();
+		symKind = escapeSym;
+	  }
+	  else if(ch == '"'){ //Escape for noquote2
+		symLex.append(ch); getChar();
+		symKind = escapeSym;
+	  }
+	  else{
+		  switch(ch){
+			  
+			case EOF :
+				symLex = new StringBuilder("EOF");
+				symKind = EOFSym; break;
+			case ';' :
+				symKind = semicolonSym; getChar(); break;
+			case '|' :
+				symKind = orSym; getChar(); break;	
+			case '.' :
+				symKind = dotSym; getChar(); break;
+			case '*' :
+				symKind = starSym; getChar(); break;
+			case '?' :
+				symKind = qSym; getChar(); break;
+			case '+' :
+				symKind = addSym; getChar(); break;
+			case '(':
+				symKind = lparenSym; getChar(); break;
+			case ')':
+				symKind = rparenSym; getChar(); break;
+			case '[':
+				symKind = lsquareSym; getChar(); break;
+			case ']':
+				symKind = rsquareSym; getChar(); break;
+			case '-':
+				symKind = minusSym; getChar(); break;
+			default:
+				symKind = noSym; getChar(); break;
 
-
-      switch (ch) {
-        case EOF :
-          symLex = new StringBuilder ("EOF");
-          symkind = EOFSym; break;
-
-        case ";" :
-          symkind = semicolonSym;
-        case "|" :
-          symkind = orSym;
-       case "." :
-          symkind = dotSym; 
-        case "*" :
-          symkind = starSym;  
-        case "?" :
-          symkind = qSym;  
-        case "+" :
-          symkind = addSym; 
-        case "(":
-          symKind = lparenSym;
-        case ")":
-          symKind = rparenSym;
-        case "[":
-          symKind = lsquareSym;
-        case "]":
-          symKind = rsquareSym;
-        case "-":
-          symKind = minusSym;
-        default:
-          symKind = noSym; 
-        break;
-          
-      }
-      symLex.append(ch);
-      GetChar(); 
-      sym = new Token(symKind, symLex.toString());
-      
+		  }
+	  }
+	
+      sym = new Token(symKind, symLex.toString()); 
       
     } // getSym
 
